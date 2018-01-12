@@ -18,7 +18,7 @@ router.get("/signup", function(req, res) {
 	res.render("auth/signup");
 });
 
-router.post("/signup", function(req, res) {
+router.post("/signup", function(req, res, next) {
 	console.log("req.body is", req.body);
 	db.user.findOrCreate({
 		where: { email: req.body.email },
@@ -50,7 +50,21 @@ router.post("/signup", function(req, res) {
 router.get("/logout", function(req, res) {
 	req.logout();
 	req.flash("Success", "Successfully Logged Out");
-	res.render("/logout");
+	res.redirect("/");
 });
+
+// OAUTH ROUTES
+//Calls the passport-facebook strategy (located in passport config)
+router.get("/facebook", passport.authenticate("facebook", {
+	scope: ["public_profile", "email"]
+}));
+
+//Handle the response from Facebook (logic located in passport config)
+router.get("/callback/facebook", passport.authenticate("facebook", {
+	successRedirect: "/profile",
+	successFlash: "You have successfully logged in via Facebook",
+	failureRedirect: "/auth/login",
+	failureFlash: "You tried to login with invalid Facebook credentials"
+}));
 
 module.exports = router

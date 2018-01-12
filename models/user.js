@@ -1,17 +1,13 @@
 'use strict';
 var bcrypt = require("bcrypt");
 
-module.exports = (sequelize, DataTypes) => {
-  var user = sequelize.define('user', {
+module.exports = function(sequelize, DataTypes) {
+  var user = sequelize.define("user", {
     firstname: DataTypes.STRING,
     lastname: DataTypes.STRING,
     username: {
       type: DataTypes.STRING,
-      validate: {
-        notNull: {
-          msg: "Username may not be blank"
-        }
-      }
+      allowNull: false
     },
     email: {
       type: DataTypes.STRING,
@@ -29,7 +25,9 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Password must be between 6 and 32 characters long"
         }
       }
-    }
+    },
+    facebookId: DataTypes.STRING,
+    facebookToken: DataTypes.STRING
   }, {
     hooks: {
       beforeCreate: function(pendingUser, options) {
